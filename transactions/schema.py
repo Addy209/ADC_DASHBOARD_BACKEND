@@ -24,7 +24,7 @@ class Query(graphene.ObjectType):
         if fromdate and todate:
             return DailyTransaction.getDatabetweenspecifieddates(fromdate,todate)
         else:
-            return DailyTransaction.fifteendaydata()
+            return DailyTransaction.objects.all()
 
     @login_required
     def resolve_fifteendaytd(self,info):
@@ -43,6 +43,7 @@ class UpdateFromFile(graphene.Mutation):
 
     success = graphene.Boolean()
 
+    @login_required
     def mutate(self, info, file, **kwargs):
         print(file)
         DailyTransaction.createEntry(file)

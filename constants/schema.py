@@ -20,10 +20,16 @@ class ModuleType(DjangoObjectType):
         model=Module
         fields=['code','module']
 
+class PriorityType(DjangoObjectType):
+    class Meta:
+        model=Priority
+        fields='__all__'
+
 class Query(graphene.ObjectType):
     month=graphene.List(MonthType)
     year=graphene.List(YearType)
     module=graphene.List(ModuleType)
+    priority=graphene.List(PriorityType)
 
     def resolve_month(self, info):
         return Month.objects.all()
@@ -33,4 +39,7 @@ class Query(graphene.ObjectType):
 
     def resolve_module(self, info):
         return Module.objects.all()
+
+    def resolve_priority(self, info):
+        return Priority.objects.all()
 

@@ -20,3 +20,10 @@ class Module(models.Model):
 
     def __str__(self) -> str:
         return str(self.code)+" => "+self.module
+
+class Priority(models.Model):
+    code=models.PositiveSmallIntegerField(primary_key=True)
+    priority=models.CharField(max_length=255)
+
+    def __str__(self) -> str:
+        return str(self.code)+" => "+self.priority

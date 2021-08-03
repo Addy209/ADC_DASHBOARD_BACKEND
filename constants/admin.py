@@ -5,3 +5,4 @@ from .models import *
 admin.site.register(Month)
 admin.site.register(Year)
 admin.site.register(Module)
+admin.site.register(Priority)

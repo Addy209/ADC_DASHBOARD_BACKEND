@@ -31,7 +31,8 @@ class DailyTransaction(models.Model):
     
     @classmethod
     def fifteendaydata(cls):
-        end=datetime.date.today()
+        end=cls.objects.latest('date').date
+        print(end)
         start=end-datetime.timedelta(15)
         return cls.objects.filter(date__range=(start,end))
     
