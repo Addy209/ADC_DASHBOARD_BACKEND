@@ -3,3 +3,5 @@ from .models import *
 # Register your models here.
 
 admin.site.register(DailyTransaction)
+admin.site.register(TotalUsers)
+admin.site.register(IncrementalUser)

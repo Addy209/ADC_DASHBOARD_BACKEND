@@ -27,7 +27,7 @@ class Query(graphene.ObjectType):
             return Expenditure.expenseData(module,fromDate,toDate)
         else:
             print("here")
-            return Expenditure.objects.filter(module__code=module)
+            return Expenditure.objects.filter(module__code=module).order_by("date")
 
 
 class CreateExpense(graphene.Mutation):

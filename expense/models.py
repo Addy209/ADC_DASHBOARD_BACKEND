@@ -51,8 +51,8 @@ class Expenditure(models.Model):
     @classmethod
     def getSixMonthData(cls):
         latest=cls.objects.latest("date")
-        old=latest.date-datetime.timedelta(180)
-        val= cls.objects.values('module','date__month','date__year').filter(date__gte=old).annotate(Sum('final_payment')).order_by("date__month")
+        old=latest.date-datetime.timedelta(365)
+        val= cls.objects.values('module','date__month','date__year').filter(date__gte=old).annotate(Sum('final_payment')).order_by("date")
         res=[]
         for x in val:
             res.append(x)
@@ -60,6 +60,6 @@ class Expenditure(models.Model):
     
     @classmethod
     def expenseData(cls, module,fromDate,toDate):
-        return cls.objects.filter(date__range=(fromDate,toDate), module__code=module)
+        return cls.objects.filter(date__range=(fromDate,toDate), module__code=module).order_by("date")
 
         
