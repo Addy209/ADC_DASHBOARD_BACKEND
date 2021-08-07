@@ -2,6 +2,8 @@ from django.db import models
 import datetime
 import openpyxl as xl
 import inspect
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 # Create your models here.
 
 class DailyTransaction(models.Model):
@@ -80,6 +82,13 @@ class DailyTransaction(models.Model):
             temp=[]
             for j in datafields:
                 temp.append(sheet.cell(j,i).value)
+            res=None
+            try:
+                res=DailyTransaction.objects.get(date=temp[0].date())
+            except:
+                pass
+            if res:
+                raise Exception("Duplicate Entry Found")
             
             DailyTransaction.doEntry(temp)
 
@@ -129,7 +138,41 @@ class IncrementalUser(models.Model):
     @classmethod
     def getfifteenddaydata(cls):
         end=cls.objects.latest("date").date
-        start=end-datetime.timedelta(15)
+        start=end-datetime.timedelta(30)
         return cls.objects.filter(date__range=(start,end)).order_by("date")
 
-        
+
+class XLSheet(models.Model):
+    xl=models.FileField(upload_to='transaction')
+
+    def __str__(self) -> str:
+        return str(self.xl)
+
+    
+
+
+# @receiver(post_save, sender=XLSheet)
+# def saveTransactionData(sender, instance, created, **kwargs):
+#     print("in signal")
+#     if created:
+#         file=instance.xl
+#         datafields=[1,4,5,6,7,8,9,11,12,13,14,15,16,18,19,20,21]
+#         wb=xl.load_workbook(file, data_only=True)
+#         sheet=wb.active
+#         print(sheet.max_column, sheet.max_row)
+#         for i in range(2,sheet.max_column+1):
+#             temp=[]
+#             for j in datafields:
+#                 temp.append(sheet.cell(j,i).value)
+            
+#             res=None
+#             try:
+#                 res=DailyTransaction.objects.get(date=temp[0].date())
+#             except:
+#                 pass
+#             if res:
+#                 raise Exception("Duplicate Entry Found")
+                
+#             DailyTransaction.doEntry(temp)
+#     instance.delete()
+
