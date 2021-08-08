@@ -102,17 +102,17 @@ DATABASES = {
 
     'default': {
 
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
 
         'NAME': 'ADC',
 
-        'USER': 'root',
+        'USER': 'postgres',
 
         'PASSWORD': 'Pass@1234',
 
         'HOST': 'localhost',
 
-        'PORT': '3306',
+        'PORT': '5432',
 
     }
 
