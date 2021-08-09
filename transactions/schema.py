@@ -70,9 +70,8 @@ class UpdateFromFile(graphene.Mutation):
 
     @login_required
     def mutate(self, info, file, **kwargs):
-        
-        xl=XLSheet(xl=file['originFileObj'])
-        xl.save()
+
+        print(file['originFileObj'])
         DailyTransaction.createEntry(file)
 
         return UpdateFromFile(success=True)

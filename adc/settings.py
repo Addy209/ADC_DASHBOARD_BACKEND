@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'constants',
     'transactions',
     'expense',
-    'project'
+    'project',
+    'documents'
 ]
 
 MIDDLEWARE = [

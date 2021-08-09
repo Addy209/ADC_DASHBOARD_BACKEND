@@ -74,25 +74,28 @@ class DailyTransaction(models.Model):
 
     @classmethod
     def createEntry(cls, file):
-        datafields=[1,4,5,6,7,8,9,11,12,13,14,15,16,18,19,20,21]
-        wb=xl.load_workbook(file['originFileObj'], data_only=True)
-        sheet=wb.active
-        print(sheet.max_column, sheet.max_row)
-        for i in range(2,sheet.max_column+1):
-            temp=[]
-            for j in datafields:
-                temp.append(sheet.cell(j,i).value)
-            res=None
-            try:
-                res=DailyTransaction.objects.get(date=temp[0].date())
-            except:
-                pass
-            if res:
-                raise Exception("Duplicate Entry Found")
-            
-            DailyTransaction.doEntry(temp)
+        try:
+            datafields=[1,4,5,6,7,8,9,11,12,13,14,15,16,18,19,20,21]
+            wb=xl.load_workbook(file['originFileObj'], data_only=True)
+            sheet=wb.active
+            print(sheet.max_column, sheet.max_row)
+            for i in range(2,sheet.max_column+1):
+                temp=[]
+                for j in datafields:
+                    temp.append(sheet.cell(j,i).value)
+                res=None
+                try:
+                    res=DailyTransaction.objects.get(date=temp[0].date())
+                except:
+                    pass
+                if res:
+                    raise Exception("Duplicate Entry Found")
+                
+                DailyTransaction.doEntry(temp)
 
-        return True
+            return True
+        except Exception as e:
+            raise e
 
 
 class TotalUsers(models.Model):
@@ -140,13 +143,6 @@ class IncrementalUser(models.Model):
         end=cls.objects.latest("date").date
         start=end-datetime.timedelta(30)
         return cls.objects.filter(date__range=(start,end)).order_by("date")
-
-
-class XLSheet(models.Model):
-    xl=models.FileField(upload_to='transaction')
-
-    def __str__(self) -> str:
-        return str(self.xl)
 
     
 
