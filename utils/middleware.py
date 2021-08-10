@@ -9,7 +9,6 @@ class CookieToUser:
         
         try:
             user=get_user_by_token(request.COOKIES['JWT'], request)
-            print(user)
             request.user=user
         except:
             pass

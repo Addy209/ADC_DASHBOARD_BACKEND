@@ -26,7 +26,6 @@ class Query(graphene.ObjectType):
         if fromDate and toDate:
             return Expenditure.expenseData(module,fromDate,toDate)
         else:
-            print("here")
             return Expenditure.objects.filter(module__code=module).order_by("date")
 
 
@@ -55,7 +54,6 @@ class CreateExpense(graphene.Mutation):
     def mutate(cls, root, info, date,module,description,fin_txn,
                             fin_rate,fin_cost,nonfin_txn,nonfin_rate,nonfin_cost,base_amt,
                             gst_percent,gst_amt,penalty,final_payment,invoice=None):
-        print("I am here")
         if date<=datetime.date.today():
             
             try:

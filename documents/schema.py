@@ -22,7 +22,6 @@ class Query(graphene.ObjectType):
     @login_required
     def resolve_myfiles(self, info):
         user=info.context.user
-        print(user)
         return File.objects.filter(user=user).order_by("uploaded_at")
 
     @login_required
@@ -98,7 +97,6 @@ class PublishPrivate(graphene.Mutation):
         try:
             file=File.objects.get(id=id)
             if user==file.user:
-                print(not file.private)
                 file.private= (not file.private)
                 file.save()
                 return PublishPrivate(success=True)

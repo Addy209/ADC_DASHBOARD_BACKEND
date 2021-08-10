@@ -11,11 +11,6 @@ class TransactionType(DjangoObjectType):
         model=DailyTransaction
         fields='__all__'
 
-class TotalUserType(DjangoObjectType):
-    class Meta:
-        model=TotalUsers
-        fields="__all__"
-
 
 class IncUserType(DjangoObjectType):
     class Meta:
@@ -32,7 +27,6 @@ class Query(graphene.ObjectType):
     fifteendaytd=graphene.List(TransactionType)
     todaydata=graphene.Field(TransactionType)
     incuserdata=graphene.List(IncUserType)
-    totalusers=graphene.Field(TotalUserType)
 
 
     @login_required
@@ -56,10 +50,6 @@ class Query(graphene.ObjectType):
     def resolve_incuserdata(self, info):
         return IncrementalUser.getfifteenddaydata()
 
-    @login_required
-    def resolve_totalusers(self, info):
-        print("Here")
-        return TotalUsers.getTotalUser()
 
 
 class UpdateFromFile(graphene.Mutation):
@@ -71,7 +61,6 @@ class UpdateFromFile(graphene.Mutation):
     @login_required
     def mutate(self, info, file, **kwargs):
 
-        print(file['originFileObj'])
         DailyTransaction.createEntry(file)
 
         return UpdateFromFile(success=True)
@@ -97,7 +86,6 @@ class AddIncrementalUsers(graphene.Mutation):
 
         incObj=IncrementalUser()
         incObj.createInc(date,mbinc,upiinc)
-        TotalUsers.updateUsers(incObj.inc_mbUsers, incObj.inc_upiUsers)
         return AddIncrementalUsers(success=True)
 
 class Mutation(graphene.ObjectType):

@@ -34,7 +34,6 @@ class DailyTransaction(models.Model):
     @classmethod
     def fifteendaydata(cls):
         end=cls.objects.latest('date').date
-        print(end)
         start=end-datetime.timedelta(30)
         return cls.objects.filter(date__range=(start,end))
     
@@ -69,7 +68,6 @@ class DailyTransaction(models.Model):
             dt.imps_bd=val[16]
             dt.save()
         except Exception as e:
-            print(e)
             raise ValueError("Incorrect Value Encountered")
 
     @classmethod
@@ -78,7 +76,6 @@ class DailyTransaction(models.Model):
             datafields=[1,4,5,6,7,8,9,11,12,13,14,15,16,18,19,20,21]
             wb=xl.load_workbook(file['originFileObj'], data_only=True)
             sheet=wb.active
-            print(sheet.max_column, sheet.max_row)
             for i in range(2,sheet.max_column+1):
                 temp=[]
                 for j in datafields:
@@ -96,33 +93,6 @@ class DailyTransaction(models.Model):
             return True
         except Exception as e:
             raise e
-
-
-class TotalUsers(models.Model):
-    total_Upi_Users=models.PositiveBigIntegerField()
-    total_Mb_Users=models.PositiveBigIntegerField()
-    updated_at=models.DateTimeField()
-
-    def __str__(self) -> str:
-        return f' UPI Users: {self.total_Upi_Users} and MB Users: {self.total_Mb_Users}'
-
-    @classmethod
-    def updateUsers(cls, mb, upi):
-        try:    
-            obj=cls.objects.first()
-            newupiusers=obj.total_Upi_Users+upi
-            newmbusers=obj.total_Mb_Users+mb
-
-            obj.total_Upi_Users=newupiusers
-            obj.total_Mb_Users=newmbusers
-            obj.updated_at=datetime.datetime.now()
-            obj.save()
-        except Exception as e:
-            raise(e)
-    @classmethod
-    def getTotalUser(cls):
-        val=cls.objects.first()
-        return val
 
 class IncrementalUser(models.Model):
     date=models.DateField(primary_key=True)

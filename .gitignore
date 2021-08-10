@@ -1,0 +1,7 @@
+/media
+/venv
+/static
+/cert
+*.sqlite3
+*/migrations
+*/__pycache__
