@@ -7,6 +7,7 @@ from graphql_jwt.decorators import login_required
 import graphql_jwt
 from graphene_file_upload.scalars import Upload
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 
 class ProjectType(DjangoObjectType):
     class Meta:
@@ -24,21 +25,37 @@ class Query(graphene.ObjectType):
     documents=graphene.List(UploadDocumentType, project=graphene.ID(required=True))
     counts=graphene.types.json.JSONString()
     deadlineProjects=graphene.List(ProjectType)
+    searchproject=graphene.List(ProjectType, text=graphene.String(required=True))
 
+    @login_required
     def resolve_allproject(self, info):
         return Project.objects.all().order_by('livedate')
 
+    @login_required
     def resolve_project(self, info, id):
         return Project.objects.get(id=id)
     
+    @login_required
     def resolve_documents(self, info, project):
         return uploadedDocument.objects.filter(project=project)
 
+    @login_required
     def resolve_counts(self, info):
         return Project.getCounts()
     
+    @login_required
     def resolve_deadlineProjects(self, info):
         return Project.deadlineProjects()
+
+    @login_required
+    def resolve_searchproject(self,info,text):
+        res=[]
+        try:
+            res=Project.objects.filter(Q(name__icontains=text)| Q(description__icontains=text)).order_by("-livedate")
+        except Exception as e:
+            pass
+        return res
+    
 
 
 

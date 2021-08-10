@@ -17,6 +17,7 @@ class FileType(DjangoObjectType):
 class Query(graphene.ObjectType):
     myfiles=graphene.List(FileType)
     sharedfiles=graphene.List(FileType)
+    search=graphene.List(FileType ,text=graphene.String(required=True))
 
     @login_required
     def resolve_myfiles(self, info):
@@ -27,7 +28,19 @@ class Query(graphene.ObjectType):
     @login_required
     def resolve_sharedfiles(self, info):
         user=info.context.user
-        return File.objects.filter(~Q(user=user) & Q(private=False))    
+        return File.objects.filter(~Q(user=user) & Q(private=False)) 
+
+    @login_required
+    def resolve_search(self, info, text):
+        res=[]
+        user=info.context.user
+        try:
+            res=File.objects.filter((Q(name__icontains=text)|Q(desc__icontains=text)|Q(type__icontains=text)) & Q(private=False) & ~Q(user=user))
+            userres=File.objects.filter((Q(name__icontains=text)|Q(desc__icontains=text)|Q(type__icontains=text)) & Q(user=user))
+            res=res.union(userres).order_by("uploaded_at")
+        except Exception as e:
+            pass
+        return res
 
 class SaveFileMutation(graphene.Mutation):
     class Arguments:
