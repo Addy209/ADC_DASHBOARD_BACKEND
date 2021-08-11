@@ -3,7 +3,7 @@ import datetime
 import openpyxl as xl
 import inspect
 from django.dispatch import receiver
-from django.db.models.signals import post_save
+from django.shortcuts import get_object_or_404
 # Create your models here.
 
 class DailyTransaction(models.Model):
@@ -96,8 +96,8 @@ class DailyTransaction(models.Model):
 
 class IncrementalUser(models.Model):
     date=models.DateField(primary_key=True)
-    inc_upiUsers=models.PositiveBigIntegerField()
-    inc_mbUsers=models.PositiveBigIntegerField()
+    inc_upiUsers=models.BigIntegerField()
+    inc_mbUsers=models.BigIntegerField()
 
     def __str__(self) -> str:
         return f'{self.date}=> MB: {self.inc_mbUsers} and UPI: {self.inc_upiUsers}'
@@ -113,6 +113,32 @@ class IncrementalUser(models.Model):
         end=cls.objects.latest("date").date
         start=end-datetime.timedelta(30)
         return cls.objects.filter(date__range=(start,end)).order_by("date")
+
+class TotalUser(models.Model):
+    date=models.DateField(primary_key=True)
+    mb=models.BigIntegerField()
+    upi=models.BigIntegerField()
+
+    def __str__(self):
+        return f'Date: {self.date}=> MB: {self.mb} and UPI: {self.upi}'
+
+    def saveData(self, date, mb, upi):
+        val=None
+        try:
+            val=get_object_or_404(TotalUser, date=date)
+            raise Exception("Data for this Date already found. Please use Admin Panel if you wish to update entry|")
+        except Exception as e:
+            if val:
+                raise e
+            if mb<0:
+                mb=0
+            if upi<0:
+                upi=0
+            self.date=date
+            self.mb=mb
+            self.upi=upi
+            self.save()
+
 
     
 

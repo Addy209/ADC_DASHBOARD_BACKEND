@@ -4,3 +4,4 @@ from .models import *
 
 admin.site.register(DailyTransaction)
 admin.site.register(IncrementalUser)
+admin.site.register(TotalUser)
