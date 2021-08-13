@@ -7,6 +7,7 @@ from graphql_jwt.decorators import login_required
 import graphql_jwt
 import datetime
 from graphene_file_upload.scalars import Upload
+from utils.constants import *
 
 class ExpenditureType(DjangoObjectType):
     class Meta:
@@ -48,25 +49,73 @@ class CreateExpense(graphene.Mutation):
         invoice=Upload(required=False)
 
     success=graphene.Boolean()
+    
 
     @classmethod
     @login_required
     def mutate(cls, root, info, date,module,description,fin_txn,
                             fin_rate,fin_cost,nonfin_txn,nonfin_rate,nonfin_cost,base_amt,
-                            gst_percent,gst_amt,penalty,final_payment,invoice=None):
+                            gst_percent,gst_amt,penalty,final_payment,invoice):
         if date<=datetime.date.today():
-            
+            bill=None
             try:
-                invoice=invoice['originFileObj']
-                expense=Expenditure()
+                bill=invoice['originFileObj']
+            except:      
+                pass
+            expense=Expenditure()
+            if bill:
+                if invoice['size']>MAX_UPLOAD_SIZE:
+                    raise Exception("Maximum Allowed File Size is {0}|".format(MAX_FILE_SIZE))
                 expense.createExpenditure(date,module,description,fin_txn,
                             fin_rate,fin_cost,nonfin_txn,nonfin_rate,nonfin_cost,base_amt,
-                            gst_percent,gst_amt,penalty,final_payment,invoice)
-                return CreateExpense(success=True)
+                            gst_percent,gst_amt,penalty,final_payment,bill)
+            else:
+                expense.createExpenditure(date,module,description,fin_txn,
+                            fin_rate,fin_cost,nonfin_txn,nonfin_rate,nonfin_cost,base_amt,
+                            gst_percent,gst_amt,penalty,final_payment)
+            return CreateExpense(success=True)
+        else:
+            raise ValueError("Invalid Date Time Entry Found")
+
+class CreateOtherExpense(graphene.Mutation):
+    class Arguments:
+        date=graphene.Date(required=True)
+        module=graphene.ID(required=True)
+        description=graphene.String(required=True)
+        base_amt=graphene.Int(required=True)
+        gst_percent=graphene.Float(required=True)
+        gst_amt=graphene.Int(required=True)
+        penalty=graphene.Int(required=True)
+        final_payment=graphene.Int(required=True)
+        invoice=Upload(required=False)
+
+    success=graphene.Boolean()
+    
+
+    @classmethod
+    @login_required
+    def mutate(cls, root, info, date,module,description,base_amt,
+                            gst_percent,gst_amt,penalty,final_payment,invoice):
+        if date<=datetime.date.today():
+            bill=None
+            try:
+                bill=invoice['originFileObj']
+
             except:      
-                return CreateExpense(success=False)
+                pass
+            expense=Expenditure()
+            if bill:
+                if invoice['size']>MAX_UPLOAD_SIZE:
+                    raise Exception("Maximum Allowed File Size is {0}".format(MAX_FILE_SIZE))
+                expense.createOtherExpenditure(date,module,description,base_amt,
+                            gst_percent,gst_amt,penalty,final_payment,bill)
+            else:
+                expense.createOtherExpenditure(date,module,description,base_amt,
+                            gst_percent,gst_amt,penalty,final_payment)
+            return CreateOtherExpense(success=True)
         else:
             raise ValueError("Invalid Date Time Entry Found")
 
 class Mutation(graphene.ObjectType):
     create_expense=CreateExpense.Field()
+    create_other_expense=CreateOtherExpense.Field()

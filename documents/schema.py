@@ -8,6 +8,7 @@ from graphene_file_upload.scalars import Upload
 from django.db.models import Q
 import os
 from django.conf import settings
+from utils.constants import *
 
 class FileType(DjangoObjectType):
     class Meta:
@@ -52,8 +53,8 @@ class SaveFileMutation(graphene.Mutation):
     @classmethod
     @login_required
     def mutate(cls, root, info, desc, file, private):
-        if file["size"]>10485760:
-            raise Exception("42")
+        if file["size"]>MAX_UPLOAD_SIZE:
+            raise Exception("Maximum Allowed File Size is {0}".format(MAX_FILE_SIZE))
         user=info.context.user
         file_obj=File()
         file_obj.saveFile(user, desc, file, private)

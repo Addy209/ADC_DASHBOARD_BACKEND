@@ -1,3 +1,4 @@
+from utils.constants import MAX_FILE_SIZE, MAX_UPLOAD_SIZE
 from django.db.models import fields
 import graphene
 from graphene.types.scalars import String
@@ -128,6 +129,8 @@ class DocumentUpload(graphene.Mutation):
     @classmethod
     def mutate(cls, root, info, project,name,document):
         try:
+            if document['size']>MAX_UPLOAD_SIZE:
+                raise Exception("Maximum Upload file size is {}|".format(MAX_FILE_SIZE))
             doc=uploadedDocument()
             doc.saveDocument(project,name,document['originFileObj'])
             doc=uploadedDocument.objects.filter(project=project)
