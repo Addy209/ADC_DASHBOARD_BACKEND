@@ -80,9 +80,9 @@ class DeleteFileMutation(graphene.Mutation):
                 file=File.objects.filter(user=user).order_by("uploaded_at")
                 return DeleteFileMutation(files=file)
             else:
-                raise Exception("02")
+                raise Exception("You are not authorized to delete this file|")
         except Exception as e:
-            raise e
+            raise Exception("Something went wrong while deleting the file|")
 
 class PublishPrivate(graphene.Mutation):
     class Arguments:
@@ -102,9 +102,9 @@ class PublishPrivate(graphene.Mutation):
                 file.save()
                 return PublishPrivate(success=True)
             else:
-                raise Exception("Not Authorized")
+                raise Exception("You are not authorized to change visibility of the file|")
         except Exception as e:
-            raise e
+            raise Exception("Something went wrong while changing visibility of the file|")
 
 class Mutation(graphene.ObjectType):
     savefile=SaveFileMutation.Field()

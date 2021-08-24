@@ -75,7 +75,7 @@ class CreateExpense(graphene.Mutation):
                             gst_percent,gst_amt,penalty,final_payment)
             return CreateExpense(success=True)
         else:
-            raise ValueError("Invalid Date Time Entry Found")
+            raise ValueError("Invalid Date Time Entry Found|")
 
 class CreateOtherExpense(graphene.Mutation):
     class Arguments:
@@ -106,7 +106,7 @@ class CreateOtherExpense(graphene.Mutation):
             expense=Expenditure()
             if bill:
                 if invoice['size']>MAX_UPLOAD_SIZE:
-                    raise Exception("Maximum Allowed File Size is {0}".format(MAX_FILE_SIZE))
+                    raise Exception("Maximum Allowed File Size is {0}|".format(MAX_FILE_SIZE))
                 expense.createOtherExpenditure(date,module,description,base_amt,
                             gst_percent,gst_amt,penalty,final_payment,bill)
             else:
@@ -114,7 +114,7 @@ class CreateOtherExpense(graphene.Mutation):
                             gst_percent,gst_amt,penalty,final_payment)
             return CreateOtherExpense(success=True)
         else:
-            raise ValueError("Invalid Date Time Entry Found")
+            raise ValueError("Invalid Date Time Entry Found|")
 
 class Mutation(graphene.ObjectType):
     create_expense=CreateExpense.Field()

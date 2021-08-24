@@ -68,7 +68,7 @@ class DailyTransaction(models.Model):
             dt.imps_bd=val[16]
             dt.save()
         except Exception as e:
-            raise ValueError("Incorrect Value Encountered")
+            raise ValueError("Incorrect Value Encountered|")
 
     @classmethod
     def createEntry(cls, file):
@@ -86,7 +86,7 @@ class DailyTransaction(models.Model):
                 except:
                     pass
                 if res:
-                    raise Exception("Duplicate Entry Found")
+                    raise Exception("Records for this date already found. Please make changes from Admin Dashboard|")
                 
                 DailyTransaction.doEntry(temp)
 

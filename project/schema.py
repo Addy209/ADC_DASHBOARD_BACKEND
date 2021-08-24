@@ -115,7 +115,7 @@ class updateProject(graphene.Mutation):
             return updateProject(project=project_obj)
 
         except Exception as e:
-            raise Exception(e)
+            raise Exception("Project does not exist|")
 
 
 class DocumentUpload(graphene.Mutation):
@@ -136,7 +136,7 @@ class DocumentUpload(graphene.Mutation):
             doc=uploadedDocument.objects.filter(project=project)
             return DocumentUpload(savedDocument=doc)
         except Exception as e:
-            raise Exception(e)
+            raise e
 
 class Mutation(graphene.ObjectType):
     createProject=createProject.Field()
